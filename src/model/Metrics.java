@@ -1,17 +1,34 @@
 package model;
 
 public class Metrics {
-
+    private int nrOfPoints;
+    private int nrOfPositiveClassifiedPoints;
     private double accuracy;
-    private double precision;
-    private double recall;
+    private double purity;
 
     public Metrics(){}
 
-    public Metrics(double accuracy, double precision, double recall) {
+    public Metrics(int nrOfPoints, int nrOfPositiveClassifiedPoints, double accuracy, double purity) {
+        this.nrOfPoints = nrOfPoints;
+        this.nrOfPositiveClassifiedPoints = nrOfPositiveClassifiedPoints;
         this.accuracy = accuracy;
-        this.precision = precision;
-        this.recall = recall;
+        this.purity = purity;
+    }
+
+    public int getNrOfPoints() {
+        return nrOfPoints;
+    }
+
+    public void setNrOfPoints(int nrOfPoints) {
+        this.nrOfPoints = nrOfPoints;
+    }
+
+    public int getNrOfPositiveClassifiedPoints() {
+        return nrOfPositiveClassifiedPoints;
+    }
+
+    public void setNrOfPositiveClassifiedPoints(int nrOfPositiveClassifiedPoints) {
+        this.nrOfPositiveClassifiedPoints = nrOfPositiveClassifiedPoints;
     }
 
     public double getAccuracy() {
@@ -22,28 +39,15 @@ public class Metrics {
         this.accuracy = accuracy;
     }
 
-    public double getPrecision() {
-        return precision;
+    public double getPurity() {
+        return purity;
     }
 
-    public void setPrecision(double precision) {
-        this.precision = precision;
+    public void setPurity(double purity) {
+        this.purity = purity;
     }
 
-    public double getRecall() {
-        return recall;
-    }
-
-    public void setRecall(double recall) {
-        this.recall = recall;
-    }
-
-    @Override
-    public String toString() {
-        return "Metrics{" +
-                "accuracy=" + accuracy +
-                ", precision=" + precision +
-                ", recall=" + recall +
-                '}';
+    public String toString(){
+        return "Dokładność: " + accuracy + ", Czystość: " + purity;
     }
 }

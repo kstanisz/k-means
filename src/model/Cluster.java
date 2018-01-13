@@ -7,6 +7,7 @@ public class Cluster {
     private String name;
     private Point center;
     private List<Point> points;
+    private Metrics metrics;
 
     public int getId() {
         return id;
@@ -38,5 +39,17 @@ public class Cluster {
 
     public void setPoints(List<Point> points) {
         this.points = points;
+    }
+
+    public Metrics getMetrics() {
+        return metrics;
+    }
+
+    public void setMetrics(Metrics metrics) {
+        this.metrics = metrics;
+    }
+
+    public String printMetrics(){
+        return "Grupa: " + name + ", " + metrics;
     }
 }

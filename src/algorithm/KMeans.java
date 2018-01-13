@@ -64,7 +64,6 @@ public class KMeans {
                     .map(Map.Entry::getKey)
                     .orElse(null);
 
-            point.setSelectedCluster(nearestCluster.getName());
             clusters.get(nearestCluster.getId()).getPoints().add(point);
         }
     }

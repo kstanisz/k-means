@@ -3,7 +3,6 @@ package model;
 public class Point {
     private String name;
     private String originalCluster;
-    private String selectedCluster;
     private double latitude;
     private double longitude;
 
@@ -28,14 +27,6 @@ public class Point {
 
     public void setOriginalCluster(String originalCluster) {
         this.originalCluster = originalCluster;
-    }
-
-    public String getSelectedCluster() {
-        return selectedCluster;
-    }
-
-    public void setSelectedCluster(String selectedCluster) {
-        this.selectedCluster = selectedCluster;
     }
 
     public double getLatitude() {
