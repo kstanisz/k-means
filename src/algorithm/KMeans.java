@@ -9,15 +9,47 @@ import java.util.stream.Collectors;
 
 public class KMeans {
 
-    private List<Point> points;
-    private List<Cluster> clusters = new ArrayList<>();
+    private List<Point> points; // List of points for clustering
+    private int nrOfClusters; // Expected number of clusters at the end of the algorithm
+    private Integer maxIterations; // Maximum number of iterations
+    private List<Cluster> clusters = new ArrayList<>(); // List of result clusters
 
-    public KMeans(List<Point> initPoints, int nrOfClusters) {
+    public KMeans(List<Point> initPoints, int nrOfClusters, Integer maxIterations) {
         this.points = initPoints;
-        initClusters(nrOfClusters);
+        this.nrOfClusters = nrOfClusters;
+        this.maxIterations = maxIterations;
     }
 
-    private void initClusters(int nrOfClusters) {
+    /*
+        Main method of k-means algorithm
+     */
+    public List<Cluster> run() {
+        initClusters();
+
+        int iterations;
+        for (iterations = 0; ; iterations++) {
+            if (maxIterations != null && maxIterations <= iterations) {
+                break;
+            }
+
+            boolean newCenters = findNewCentersForClusters();
+            if (!newCenters) {
+                break;
+            }
+
+            assignPointsForClusters();
+            assignNamesForClusters();
+        }
+
+        System.out.println("Number of iterations: " + iterations);
+        return clusters;
+    }
+
+    /*
+        Method to initialize clusters.
+        It draws initial center of each cluster and then assigns points for clusters.
+     */
+    private void initClusters() {
         if (points.size() < nrOfClusters) {
             nrOfClusters = points.size();
         }
@@ -26,7 +58,6 @@ public class KMeans {
 
         for (int i = 0; i < nrOfClusters; i++) {
             Cluster cluster = new Cluster();
-            cluster.setId(i);
             cluster.setCenter(points.get(i));
             clusters.add(cluster);
         }
@@ -34,25 +65,27 @@ public class KMeans {
         assignNamesForClusters();
     }
 
-    public List<Cluster> run(int nrOfIterations) {
-        for (int i = 0; i < nrOfIterations; i++) {
-            singleRun();
+    /*
+        Method to find new center for each cluster
+        Returns true if the algorithm found new centers
+     */
+    private boolean findNewCentersForClusters() {
+        boolean newCenters = false;
+        for (Cluster cluster : clusters) {
+            Point previousCenter = cluster.getCenter();
+            Point newCenter = CoordinatesCalculator.getCenter(cluster.getPoints());
+            cluster.setCenter(newCenter);
+
+            newCenters |= !previousCenter.equals(newCenter);
         }
-        return clusters;
+
+        return newCenters;
     }
 
-    private void singleRun() {
-        findNewCentersForClusters();
-        assignPointsForClusters();
-        assignNamesForClusters();
-    }
-
-    private void findNewCentersForClusters() {
-        clusters.stream()
-                .filter(cluster -> !cluster.getPoints().isEmpty())
-                .forEach(cluster -> cluster.setCenter(CoordinatesCalculator.getCenter(cluster.getPoints())));
-    }
-
+    /*
+        Method to assign points for clusters.
+        For each point it computes the distance to center of each cluster and chooses the nearest one.
+     */
     private void assignPointsForClusters() {
         clusters.forEach(cluster -> cluster.setPoints(new ArrayList<>()));
         for (Point point : points) {
@@ -64,10 +97,14 @@ public class KMeans {
                     .map(Map.Entry::getKey)
                     .orElse(null);
 
-            clusters.get(nearestCluster.getId()).getPoints().add(point);
+            clusters.get(clusters.indexOf(nearestCluster)).getPoints().add(point);
         }
     }
 
+    /*
+        Method to assign names for clusters.
+        Name of the cluster is the most common original cluster name form list of clustered points
+     */
     private void assignNamesForClusters() {
         for (Cluster cluster : clusters) {
             Map<String, Long> originalClusterNamesFrequencies = cluster.getPoints().stream()

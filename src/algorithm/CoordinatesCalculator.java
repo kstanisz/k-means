@@ -7,10 +7,18 @@ import java.util.List;
 
 public class CoordinatesCalculator {
 
-    private final static double DEGREES_TO_RADIANS = Math.PI / 180.0;
     private final static double RADIANS_TO_DEGREES = 180.0 / Math.PI;
+    private final static double DEGREES_TO_RADIANS = Math.PI / 180.0;
     private final static double EARTH_RADIUS_KM = 6371.0;
 
+    // Constants used for Mercator projection
+    private final static double MAP_WIDTH = 2000.0;
+    private final static double MAP_HEIGHT = 1000.0;
+
+    /*
+        Method to calculate distance between two points.
+        It implements The Haversine Formula.
+    */
     public static double getDistance(Point first, Point second) {
         double degreesLongitude = (second.getLongitude() - first.getLongitude()) * DEGREES_TO_RADIANS;
         double degreesLatitude = (second.getLatitude() - first.getLatitude()) * DEGREES_TO_RADIANS;
@@ -24,6 +32,9 @@ public class CoordinatesCalculator {
         return c * EARTH_RADIUS_KM;
     }
 
+    /*
+        Method to find the new center of given cluster
+     */
     public static Point getCenter(List<Point> points) {
         double x = 0.0, y = 0.0, z = 0.0;
         for (Point point : points) {
@@ -47,6 +58,27 @@ public class CoordinatesCalculator {
         double longitude = radiansLongitude * RADIANS_TO_DEGREES;
         double latitude = radiansLatitude * RADIANS_TO_DEGREES;
 
-        return new Point(latitude, longitude);
+        Point center = new Point(latitude, longitude);
+        center.setX(convertLongitudeToX(longitude));
+        center.setY(convertLatitudeToY(latitude));
+
+        return center;
+    }
+
+    /*
+        Method to convert longitude to X coordinate.
+        It implements Mercator projection.
+    */
+    public static double convertLongitudeToX(double longitude) {
+        return (longitude + 180.0) * (MAP_WIDTH / 360);
+    }
+
+    /*
+        Method to convert latitude to Y coordinate.
+        It implements Mercator projection.
+    */
+    public static double convertLatitudeToY(double latitude) {
+        double mercator = Math.log(Math.tan((Math.PI / 4) + ((latitude * DEGREES_TO_RADIANS) / 2)));
+        return (MAP_HEIGHT / 2) - (MAP_WIDTH * mercator / (2 * Math.PI));
     }
 }

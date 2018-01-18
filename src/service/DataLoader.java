@@ -1,5 +1,6 @@
 package service;
 
+import algorithm.CoordinatesCalculator;
 import model.Point;
 
 import java.io.*;
@@ -27,10 +28,12 @@ public class DataLoader {
     private Point createPointFromCsvLine(String csvLine) {
         String[] csvCells = csvLine.split(SEPARATOR);
         Point point = new Point();
-        point.setName(csvCells[0]);
         point.setOriginalCluster(csvCells[1]);
         point.setLatitude(Double.valueOf(csvCells[2]));
+        point.setY(CoordinatesCalculator.convertLatitudeToY(point.getLatitude()));
         point.setLongitude(Double.valueOf(csvCells[3]));
+        point.setX(CoordinatesCalculator.convertLongitudeToX(point.getLongitude()));
+
         return point;
     }
 }
